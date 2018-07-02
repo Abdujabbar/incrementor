@@ -30,17 +30,28 @@ func (i *Incrementor) GetNumber() int {
 //IncrementNumber method for incrementing the current value of Incrementor
 //if incrementor value is equal or greater than max value we will set to zero current value again
 func (i *Incrementor) IncrementNumber() {
-	currentValue := i.GetNumber()
-	defer i.mutex.Unlock()
-	i.mutex.Lock()
-	if currentValue+1 >= i.maxValue {
-		i.value = 0
+	if i.GetNumber()+1 >= i.maxValue {
+		i.setZeroValue()
 	} else {
+		defer i.mutex.Unlock()
+		i.mutex.Lock()
 		i.value++
 	}
 }
 
+//setZeroValue method for setting zero current value
+func (i *Incrementor) setZeroValue() {
+	defer i.mutex.Unlock()
+	i.mutex.Lock()
+	i.value = 0
+}
+
 //SetMaximumValue method for setting max value on Incrementor
 func (i *Incrementor) SetMaximumValue(v int) {
-	i.maxValue = v
+	if v > 0 {
+		if i.GetNumber() >= v {
+			i.setZeroValue()
+		}
+		i.maxValue = v
+	}
 }

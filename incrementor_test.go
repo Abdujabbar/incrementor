@@ -24,3 +24,14 @@ func TestMaxValue(t *testing.T) {
 		t.Error("Error while cleaning up value")
 	}
 }
+
+func TestSetMaxValueGreaterThanCurrentValue(t *testing.T) {
+	n := NewIncrementor()
+	n.IncrementNumber()
+	n.IncrementNumber()
+	n.IncrementNumber()
+	n.SetMaximumValue(2)
+	if n.GetNumber() != 0 {
+		t.Error("Error while cleaning up the value on set lower max value")
+	}
+}
