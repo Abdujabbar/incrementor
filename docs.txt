@@ -1,0 +1,28 @@
+PACKAGE DOCUMENTATION
+
+package incrementor
+    import "."
+
+
+TYPES
+
+type Incrementor struct {
+    // contains filtered or unexported fields
+}
+    Incrementor type struct
+
+func NewIncrementor() *Incrementor
+    NewIncrementor method for creating new instance of Incrementor
+
+func (i *Incrementor) GetNumber() int
+    GetNumber function for getting current value of Incrementor
+
+func (i *Incrementor) IncrementNumber()
+    IncrementNumber method for incrementing the current value of Incrementor
+    if incrementor value is equal or greater than max value we will set to
+    zero current value again
+
+func (i *Incrementor) SetMaximumValue(v int)
+    SetMaximumValue method for setting max value on Incrementor
+
+
