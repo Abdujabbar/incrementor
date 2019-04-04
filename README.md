@@ -9,5 +9,5 @@ simple struct Incrementor has these functions methods:
 
 For running tests:
 ```
-    go test -race .
+    go test -cover -race .
 ```

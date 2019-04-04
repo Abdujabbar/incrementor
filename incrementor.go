@@ -1,22 +1,24 @@
+//Package incrementor implements simple counter structure, which supports concurrency
 package incrementor
 
 import (
+	"fmt"
 	"sync"
 )
 
 //Incrementor  type struct
 type Incrementor struct {
-	value    int         //current stored value in incrementor
-	mutex    *sync.Mutex //mutex for detect from data racing
-	maxValue int         //max value for struct
+	currentValue int         //current stored value in incrementor
+	mutex        *sync.Mutex //mutex for detect from data racing
+	maxValue     int         //max value for struct
 }
 
 //NewIncrementor method for creating new instance of Incrementor
 func NewIncrementor() *Incrementor {
 	return &Incrementor{
-		maxValue: 1<<31 - 1,
-		mutex:    &sync.Mutex{},
-		value:    0,
+		maxValue:     1<<31 - 1,
+		mutex:        &sync.Mutex{},
+		currentValue: 0,
 	}
 }
 
@@ -24,7 +26,7 @@ func NewIncrementor() *Incrementor {
 func (i *Incrementor) GetNumber() int {
 	defer i.mutex.Unlock()
 	i.mutex.Lock()
-	return i.value
+	return i.currentValue
 }
 
 //IncrementNumber method for incrementing the current value of Incrementor
@@ -35,7 +37,7 @@ func (i *Incrementor) IncrementNumber() {
 	} else {
 		defer i.mutex.Unlock()
 		i.mutex.Lock()
-		i.value++
+		i.currentValue++
 	}
 }
 
@@ -43,15 +45,17 @@ func (i *Incrementor) IncrementNumber() {
 func (i *Incrementor) setZeroValue() {
 	defer i.mutex.Unlock()
 	i.mutex.Lock()
-	i.value = 0
+	i.currentValue = 0
 }
 
 //SetMaximumValue method for setting max value on Incrementor
-func (i *Incrementor) SetMaximumValue(v int) {
-	if v > 0 {
+func (i *Incrementor) SetMaximumValue(v int) error {
+	if v >= 0 {
 		if i.GetNumber() >= v {
 			i.setZeroValue()
 		}
 		i.maxValue = v
+		return nil
 	}
+	return fmt.Errorf("You cannot set maximum value less then zero")
 }

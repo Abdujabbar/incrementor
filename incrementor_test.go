@@ -1,6 +1,9 @@
 package incrementor
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
 func TestIncrement(t *testing.T) {
 	n := NewIncrementor()
@@ -18,10 +21,21 @@ func TestMaxValue(t *testing.T) {
 	n := NewIncrementor()
 	n.IncrementNumber()
 	n.IncrementNumber()
-	n.SetMaximumValue(3)
+	err := n.SetMaximumValue(3)
+	if err != nil {
+		t.Error(err.Error())
+	}
 	n.IncrementNumber()
 	if n.GetNumber() != 0 {
 		t.Error("Error while cleaning up value")
+	}
+}
+
+func TestMaxValueWithLessThanZero(t *testing.T) {
+	n := NewIncrementor()
+	err := n.SetMaximumValue(-2)
+	if err == nil {
+		t.Error("Problem on receive less than zero for maximum value")
 	}
 }
 
@@ -33,5 +47,21 @@ func TestSetMaxValueGreaterThanCurrentValue(t *testing.T) {
 	n.SetMaximumValue(2)
 	if n.GetNumber() != 0 {
 		t.Error("Error while cleaning up the value on set lower max value")
+	}
+}
+
+func TestConcurrencyIncrementing(t *testing.T) {
+	inc := NewIncrementor()
+	wg := &sync.WaitGroup{}
+	for i := 0; i < 1000; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			inc.IncrementNumber()
+		}()
+	}
+	wg.Wait()
+	if inc.GetNumber() != 1000 {
+		t.Errorf("Error while on concurrency incrementing, with answer %d", inc.GetNumber())
 	}
 }

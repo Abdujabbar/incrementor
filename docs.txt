@@ -3,6 +3,8 @@ PACKAGE DOCUMENTATION
 package incrementor
     import "."
 
+    Package incrementor implements simple counter structure, which supports
+    concurrency
 
 TYPES
 
@@ -22,7 +24,5 @@ func (i *Incrementor) IncrementNumber()
     if incrementor value is equal or greater than max value we will set to
     zero current value again
 
-func (i *Incrementor) SetMaximumValue(v int)
+func (i *Incrementor) SetMaximumValue(v int) error
     SetMaximumValue method for setting max value on Incrementor
-
-
